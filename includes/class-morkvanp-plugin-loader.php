@@ -233,7 +233,7 @@ class MNP_Plugin_Loader {
 				'parent_slug'	=> 'morkvanp_plugin',
 				'page_title'	=> 'Налаштування',
 				'menu_title'	=> 'Налаштування',
-				'capability'	=> 'manage_options',
+				'capability'	=> 'manage_woocommerce',
 				'menu_slug'		=> 'morkvanp_plugin',
 				'callback'		=> array( $this, 'add_settings_page' )
 			),
@@ -241,7 +241,7 @@ class MNP_Plugin_Loader {
 				'parent_slug' 	=> 'morkvanp_plugin', 
 				'page_title' 	=> 'Створити Накладну', 
 				'menu_title' 	=> 'Створити Накладну', 
-				'capability' 	=> 'manage_options', 
+				'capability' 	=> 'manage_woocommerce', 
 				'menu_slug' 	=> 'morkvanp_invoice', 
 				'callback' 		=>  array( $this, 'add_invoice_page' )
 			),
