@@ -1,15 +1,8 @@
-=== Nova Poshta TTN ===
-Contributors: bandido
-Tags: woocommerce, nova poshta, нова пошта, новая почта, ecommerce
-Requires at least: 4.1
-Tested up to: 5.1.1
-Stable tag: 1.0.15
-License: GPLv2
-License URI: http://www.gnu.org/licenses/gpl-2.0.html
+
 
 Створюйте експрес-накладні автоматично, на сторінці замовлення. Менше часу витрачайте на відправку.
 
-== Description ==
+
 
 Плагін допомагає автоматизувати процес відправки ваших замовлень через Нову Пошту. На сторінці замовлення можна згенерувати експрес накладну із даних, які вносив покупець при оформленні. Ви просто приходите на відділення і кажете номер накладної менеджеру.
 
@@ -17,7 +10,7 @@ License URI: http://www.gnu.org/licenses/gpl-2.0.html
 Для роботи цього плагіна, потрібен плагін доставки Нової Пошти Woo Shipping for Nova Poshta https://wordpress.org/plugins/woo-shipping-for-nova-poshta
 
 
-== Інструкція ==
+Інструкція
 
 1. Встановіть і активуйте плагін
 
@@ -29,7 +22,7 @@ License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
 
 
-== Підтримка ==
+Підтримка
 
 Якщо виникла помилка при встановленні чи використанні плагіна - пишіть на hello@morkva.co.ua або в нашу групу в Facebook https://www.facebook.com/groups/morkvasupport/.
 
@@ -73,7 +66,7 @@ License URI: http://www.gnu.org/licenses/gpl-2.0.html
 3. Номер накладної з'явиться внизу сторінки. Скопіюйте його та відправте клієнту
 4. Налаштування плагіна
 
-== Що нового? ==
+Що нового?
 
 
 = 1.0.15 =
