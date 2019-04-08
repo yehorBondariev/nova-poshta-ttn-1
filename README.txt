@@ -75,6 +75,10 @@ License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
 == Що нового? ==
 
+
+= 1.0.15 =
+* [fix] виправено баги
+
 = 1.0.14 =
 * [new] перехід від bootstrap дизайну до wp core дизайну 
 * [new] додано валідацію ПІБ на кирилицю
@@ -111,6 +115,9 @@ License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
 
 == Changelog ==
+
+= 1.0.15 =
+* [fix] виправено баги
 
 = 1.0.14 =
 * [new] перехід від bootstrap дизайну до wp core дизайну 
