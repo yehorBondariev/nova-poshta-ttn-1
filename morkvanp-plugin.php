@@ -8,7 +8,7 @@
  * Plugin Name:       Nova Poshta TTN
  * Plugin URI:        https://www.morkva.co.ua/woocommerce-plugins/avtomatychna-heneratsiia-nakladnykh-nova-poshta?utm_source=nova-poshta-ttn
  * Description:       Генеруйте накладні просто зі сторінки замовлення і зекономте тонну часу на відділенні при відправці.
- * Version:           1.0.14
+ * Version:           1.0.15
  * Author:            MORKVA
  * Author URI:        https://morkva.co.ua?utm_source=nova-poshta-ttn
  * License:           GPL-2.0+
