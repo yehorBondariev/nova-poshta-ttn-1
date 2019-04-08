@@ -17,11 +17,37 @@ include("morkvanp-plugin-invoice.php");
 
 if ( isset($_SESSION['order_data']) ) { $order_data = $_SESSION['order_data']; }
 
+
+$showpage = true;
+if(isset($_SERVER['HTTP_REFERER'])) {
+    $qs = parse_url($_SERVER['HTTP_REFERER'], PHP_URL_QUERY);
+    if(!empty($qs)){
+        parse_str($qs, $output);
+        // TODO check for key existence
+        if (isset($output['post'])){
+        $order_id =  $output['post'];
+        }
+      }
+}
+if(isset($order_id)){
+        $order_data0 = wc_get_order( $order_id );
+        $order_data = $order_data0->get_data();
+        $_SESSION['order_data'] = $order_data;
+}
+else if ( isset($_SESSION['order_data']) ) {
+  echo '<script>console.log("session order id:'.$_SESSION['order_data']['id'].'");</script>';
+  $order_data = $_SESSION['order_data'];
+}
+else{
+  $showpage =false;
+}
+
+
 if ( isset($order_data["billing"]["address_1"]) ) {
  	$billing_address = $order_data["billing"]["address_1"];
 	$warehouse_billing = explode(" ", $billing_address);
 	$warehouse_billing = str_replace([":", "№"], "", $warehouse_billing);
-	
+
 	if (empty($warehouse_billing[1])) {
 		unset($warehouse_billing[1]);
 	} else {
@@ -31,7 +57,7 @@ if ( isset($order_data["billing"]["address_1"]) ) {
 	$billing_address = $order_data["shipping"]["address_1"];
 	$warehouse_billing = explode(" ", $billing_address);
 	$warehouse_billing = str_replace([":", "№"], "", $warehouse_billing);
-	
+
 	if (empty($warehouse_billing[1])) {
 		unset($warehouse_billing[1]);
 	} else {
@@ -43,17 +69,17 @@ if ( isset($order_data["billing"]["address_1"]) ) {
 }
 
 if ( isset($order_data["billing"]["first_name"]) ) {
- 	$shipping_first_name = $order_data["billing"]["first_name"]; 
+ 	$shipping_first_name = $order_data["billing"]["first_name"];
 } else if ( isset( $order_data['shipping']['first_name'] ) ) {
-	$shipping_first_name = $order_data["shipping"]["first_name"]; 
+	$shipping_first_name = $order_data["shipping"]["first_name"];
 } else {
 	$shipping_first_name = "";
 }
 
-if ( isset($order_data["billing"]["last_name"]) ) { 
-	$shipping_last_name = $order_data["billing"]["last_name"]; 
+if ( isset($order_data["billing"]["last_name"]) ) {
+	$shipping_last_name = $order_data["billing"]["last_name"];
 } else if ( isset( $order_data["shipping"]["last_name"] ) ) {
-	$shipping_last_name = $order_data["shipping"]["last_name"]; 
+	$shipping_last_name = $order_data["shipping"]["last_name"];
 } else {
 	$shipping_last_name = "";
 }
@@ -67,7 +93,7 @@ if ( isset($order_data["billing"]["address_2"]) ) {
 } else {
 	$shipping_address[0] = "";
 	$shipping_address[1] = "";
-} 
+}
 /* OTHER GETTING DATA FUNCTIONS */
 
 if ( isset($order_data["billing"]["city"]) ) {
@@ -101,9 +127,15 @@ if ( isset($order_data["billing"]["phone"]) ) {
 
 
 <div class="container">
-
+  <? if($showpage){ ?>
 	<form class="form-invoice" action="admin.php?page=morkvanp_invoice" method="post" name="invoice">
-
+    <div id="messagebox" class="messagebox_show"></div>
+    <?php
+        if ( !empty( $order_data["id"] ) ) {
+          echo '<a class="btn" href="/wp-admin/post.php?post=' . $order_data["id"] . '&action=edit">Повернутись до замовлення</a>';
+          echo '';
+        }
+      ?>
 		<div class="tablecontainer">
 			<table class="form-table full-width-input">
 				<tbody>
@@ -180,7 +212,7 @@ if ( isset($order_data["billing"]["phone"]) ) {
 			            <label for="invoice_description">Опис відправлення</label>
 			          </th>
 			          <td>
-			            <textarea  type="text" id="invoice_description" name="invoice_description" class="input" minlength="1" required></textarea>
+			            <textarea  type="text" id="invoice_description" name="invoice_description" class="input" minlength="1" required><? echo get_option('invoice_description'); ?></textarea>
 			  					<p id="error_dec"></p>
 			          </td>
 			        </tr>
@@ -272,10 +304,10 @@ if ( isset($order_data["billing"]["phone"]) ) {
 				      </tr>
 				      <tr>
 				          <td>
-				            <input type="submit" value="Створити" class="button button-primary" id="submit"/>
+				            <input type="submit" value="Створити" class="checkforminputs button button-primary" id="submit"/>
 				          </td>
 				      </tr>
-					
+
 				</tbody>
 			</table>
 		</div>
@@ -289,10 +321,10 @@ if ( isset($order_data["billing"]["phone"]) ) {
 						Підтримка
 						</h3>
 					</div>
-			
+
 				<div class="card-body">
 					<p>
-						Якщо у вас виникли проблеми із створенням накладної або щось інше, то звертайтесь до нашої підтримки в Facebook.	
+						Якщо у вас виникли проблеми із створенням накладної або щось інше, то звертайтесь до нашої підтримки в Facebook.
 					</p>
 					<h5><a href="https://www.facebook.com/groups/morkvasupport" class="wpbtn button button-primary" target="_blank"><?php echo '<img class="imginwpbtn" src="' . plugins_url('img/messenger.png', __FILE__) . '" height="25" width="25"  />'; ?> Написати в чат</a></h5>
 				</div>
@@ -312,6 +344,8 @@ if ( isset($order_data["billing"]["phone"]) ) {
 		</div>
 	  	</div>
 	</form>
+<? } ?>
+<? if(!$showpage){ echo '<h3>Для створення накладної перейдіть на <a href="edit.php?post_type=shop_order">сторінку замовлення</a></h3>';} ?>
 
 </div>
 
@@ -324,19 +358,19 @@ if ( isset($order_data["billing"]["phone"]) ) {
 	$owner_address = get_option('warehouse');
 	$owner_address = explode(" ", $owner_address);
 
-	
+
 	$bad_symbols = array( '+', '-', '(', ')', ' ' );
 
   	$invoice->sender_phone = str_replace( $bad_symbols, '', $invoice->sender_phone );
 
 
-  	
+
 	if ( empty($owner_address[0] or empty($owner_address[1])) ) {
 		$owner_address[0] = "";
 		$owner_address[1] = "";
 		exit('Поле адреса віділення в налаштуваннях пусте, заповніть його, будь ласка');
-	} 
-	
+	}
+
 	$invoice->sender_street = $owner_address[0];
 	$invoice->sender_building = $owner_address[1];
 
@@ -357,9 +391,11 @@ if ( isset($order_data["billing"]["phone"]) ) {
 	$invoice->createInvoice();
 
 	$order_id = $order_data["id"];
-	
+
 	if (isset($order_id)) {
 		$order = wc_get_order( $order_id );
+
+    //print_r($_SESSION);
 		$note = "Номер накладної: " . $_SESSION['invoice_id'];
 		$order->add_order_note( $note );
 		$order->save();

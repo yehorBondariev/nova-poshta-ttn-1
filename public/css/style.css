@@ -342,7 +342,7 @@ body>#wpfooter {
 	width: auto;
 	background: #fff;
 	display: inline-block;
-	
+
 	padding: 8px;
 }
 .updatedpro{
@@ -366,4 +366,50 @@ body>#wpfooter {
 	.firstrow a {
 		word-wrap: break-word;
 	}
+}
+.form-invoice>#messagebox {
+    grid-column: 1 / -1;
+    margin-top: 8px;
+    height: 0px;
+    transition: all 1s ease;
+    overflow: hidden;
+    background: #fff;
+    padding: 0px;
+}
+#errno>div{
+	overflow: hidden;
+}
+#messagebox > div{
+	width: 100%;
+	max-width: 100%;
+}
+#messagebox > div.card {
+    width: 100%;
+    max-width: 100%;
+    border: none;
+    padding: 8px;
+    margin: 0;
+        box-shadow: none;
+}
+#messagebox > div > p{
+	width: 49%;
+	float: left;
+  color: #23282d;
+}
+#messagebox > div > p br{
+	display: block;
+	margin:0 !important;
+}
+#nnnid{
+  opacity: 0 !important;
+}
+#errno, #nnnid{
+	opacity: 0;
+	z-index: -10;
+  position: relative;
+}
+#messagebox h3 {
+  width: 99%;
+  display: inline-block;
+  float: left;
 }

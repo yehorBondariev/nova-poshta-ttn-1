@@ -1,4 +1,4 @@
-﻿=== Nova Poshta TTN ===
+=== Nova Poshta TTN ===
 Contributors: bandido
 Tags: woocommerce, nova poshta, нова пошта, новая почта, ecommerce
 Requires at least: 4.1
@@ -77,7 +77,9 @@ License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
 
 = 1.0.15 =
-* [fix] виправено баги
+* [fix] виправлено баги
+* [new] додано ряд перевірок логіки при створенні накладної
+* [new] при неправильному введенні даних в форму, відображається і код і роз'яснення помилки
 
 = 1.0.14 =
 * [new] перехід від bootstrap дизайну до wp core дизайну 
@@ -117,7 +119,9 @@ License URI: http://www.gnu.org/licenses/gpl-2.0.html
 == Changelog ==
 
 = 1.0.15 =
-* [fix] виправено баги
+* [fix] виправлено баги
+* [new] додано ряд перевірок логіки при створенні накладної
+* [new] при неправильному введенні даних в форму, відображається і код і роз'яснення помилки
 
 = 1.0.14 =
 * [new] перехід від bootstrap дизайну до wp core дизайну 

@@ -14,23 +14,23 @@
 class MNP_Plugin_Invoice extends MNP_Plugin_Invoice_Controller {
 
 	public $api_key;
-	
+
 	public $order_id;
-	
+
 	#--------------Here Is Sender Data Block -------------
 
 	public $sender_ref;
 
 	public $sender_names;
-	
+
 	public $sender_first_name;
 
 	public $sender_middle_name;
-	
+
 	public $sender_last_name;
-	
+
 	public $sender_city;
-	
+
 	public $sender_phone;
 
 	public $sender_contact;
@@ -121,7 +121,7 @@ class MNP_Plugin_Invoice extends MNP_Plugin_Invoice_Controller {
 		$this->datetime = $invoiceController->datetime;
 
 		return $this;
-	
+
 	}
 
 	#------------- Functions For Creating Sender Is Here -----------
@@ -342,7 +342,7 @@ class MNP_Plugin_Invoice extends MNP_Plugin_Invoice_Controller {
 		$street_name_full = $street_name[0];
 		$street_number = $street_name[1];
 		$street_number = trim($street_number);
-		
+
 		$this->sender_street = $street_name_full;
 		$this->sender_building = $street_number;
 		$this->sender_warehouse_number = $warehouse_number;
@@ -470,9 +470,9 @@ class MNP_Plugin_Invoice extends MNP_Plugin_Invoice_Controller {
 		$obj_city = json_decode($city_response, true);
 		$this->recipient_city = $obj_city["data"][0]["Description"];
 		$this->recipient_area_ref = $obj_city["data"][0]["Area"];
-		
+
 		/* Getting Recipient Area */
-		
+
 		$methodProperties = array(
 			"Ref" => $this->recipient_city
 		);
@@ -590,7 +590,7 @@ class MNP_Plugin_Invoice extends MNP_Plugin_Invoice_Controller {
 			exit('Вибачаємось, але сталась помилка');
 		} else {
 			$obj = json_decode( $response, true );
-			
+
 		}
 
 	}
@@ -641,7 +641,7 @@ class MNP_Plugin_Invoice extends MNP_Plugin_Invoice_Controller {
 	{
 
 		$invoiceController = new MNP_Plugin_Invoice_Controller();
-		
+
 		$wooshipping_settings = get_option('woocommerce_nova_poshta_shipping_method_settings');
 		$this->sender_address = $wooshipping_settings["warehouse"];
 
@@ -688,7 +688,7 @@ class MNP_Plugin_Invoice extends MNP_Plugin_Invoice_Controller {
 		$url = "https://api.novaposhta.ua/v2.0/json/";
 
 		MNP_Plugin_Invoice_Controller::createRequest( $url, $invoice, $curl );
- 
+
 		$response = curl_exec( $curl );
 		$err = curl_error( $curl );
 		curl_close( $curl );
@@ -696,29 +696,104 @@ class MNP_Plugin_Invoice extends MNP_Plugin_Invoice_Controller {
 		if ( $err ) {
 			print_r($err);
 			exit('Вибачаємось, але сталась помилка');
-		} else {
+		} else
+		{
 			$obj = json_decode( $response, true );
 			$document_number = $obj["data"][0]["Ref"];
 			$document_id = $obj["data"][0]["IntDocNumber"];
 
-			// echo "<pre><b>Invoice: </b>";
+			session_start();
+
+			// echo "<pre>";
 			// var_dump($response);
 			// echo "</pre>";
 
-			session_start();
-			
+
+
 			$_SESSION['invoice_id'] = $document_id;
-		
-			/*if ( isset($_SESSION['invoice_id']) ) {
-			$order = wc_get_order( $order_id );
-			$note = __('Номер накладної: ' . $_SESSION['invoice_id']);
-			$order->add_order_note( $note );
-			$order->save();
-			}*/
-			
+
+
+			$invoiceforerror = array(
+			"apiKey" => $this->api_key,
+			"modelName" => "CommonGeneral",
+			"calledMethod" => "getMessageCodeText",
+			"methodProperties" => $methodProperties
+			);
+
+			$curlforerror = curl_init();
+
+			$urlforerror = "https://api.novaposhta.ua/v2.0/json/";
+
+			MNP_Plugin_Invoice_Controller::createRequest( $urlforerror, $invoiceforerror, $curlforerror );
+
+			$responseforerror = curl_exec( $curlforerror );
+			$errforerror = curl_error( $curlforerror );
+			curl_close( $curlforerror );
+			$objforerror = json_decode( $responseforerror, true );
+			//print_r($objforerror['data']);
+
+			$newarray = null;
+
+			for($i = 0 ; $i < sizeof($objforerror['data']); $i++ ){
+
+				$mc = $objforerror['data'][$i]['MessageCode'];
+				$ua = $objforerror['data'][$i]['MessageDescriptionUA'];
+				$ru = $objforerror['data'][$i]['MessageDescriptionRU'];
+				$eng = $objforerror['data'][$i]['MessageText'];
+
+				$newarray[$mc]['ua'] = $ua;
+			}
+			echo '<hr>';
+
+
+			$errors = $obj["errorCodes"];
+
+
+			$errors0 = $obj;
+
+
+			$error = $obj["errorCodes"][0];
+
+			if ( $error ) {
+
+				/*echo "
+				<div class='container'>
+					<div class='card text-white bg-danger'>
+						<h3>Помилка</h3>
+						<p>
+							Код помилки: " . $errors . "
+						</p>
+					</div>
+				</div>
+				";*/
+
+				echo "<div id='errno' class='container'>";
+					echo "<div class='card text-white bg-danger'>";
+						echo "<h3>Помилка</h3>";
+						echo "<p>  ";
+							foreach ( $errors as $code ) {
+								if($code == 20000200068){
+									echo "Ключ API не дійсний";
+								}
+								echo $newarray[$code]['ua'] . "<br>" . " ";
+							}
+
+
+						echo "</p>";
+						echo "<p> Код(и) помилки: ";
+							foreach ( $errors as $code ) {
+								echo $code . ";" . " ";
+							}
+						echo '</p><div class="clr"></div>';
+					echo "</div>";
+				echo "</div>";
+
+				exit;
+			}
+
 			echo "
-			<div class='container'>
-				<div class=''>
+			<div id='nnnid' class='container'>
+				<div class='sucsess-naklandna'>
 					<h3>Накладна успішно створена!</h3>
 					<p>
 						Номер накладної: " . $_SESSION['invoice_id'] . "
@@ -726,17 +801,28 @@ class MNP_Plugin_Invoice extends MNP_Plugin_Invoice_Controller {
 				</div>
 			</div>
 			";
-			
-			/*$wpdb = new wpdb();
-			
-			$table = $wpdb->prefix . 'novaposhta_ttn_invoices';
-			
-			$order_id = $this->order_id;
-			$invoice_id = $document_id;
-			$invoice_ref = $document_number;
-			
-			$result = $wpdb->query("INSERT INTO $table (order_id, invoice_ref, invoice_id) VALUES ('$order_id', '$invoice_ref', '$invoice_id')");*/
-			
+
+
+
+			global $wpdb;
+
+			$invoice_number = $obj["data"][0]["IntDocNumber"];
+			$invoice_ref = $obj["data"][0]["Ref"];
+
+			$table_name = $wpdb->prefix . 'novaposhta_ttn_invoices';
+
+			$wpdb->insert(
+				$table_name,
+				array(
+					'order_id' => $this->order_id,
+					'order_invoice' => $invoice_number,
+					'invoice_ref' => $invoice_ref
+				)
+			);
+
+			$_SESSION['invoice_id_for_order'] = $_SESSION['invoice_id'];
+			unset( $_SESSION['invoice_id'] );
+
 		}
 
 		return $this;
