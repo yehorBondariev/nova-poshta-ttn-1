@@ -1,37 +1,69 @@
-.updated .card{
- border: none;
- display: table-cell;
- width: 50%;
+.w70 .form-table tr th{
+  min-width: 200px;
 }
-.full-width-input input[type="text"], .full-width-input textarea{
- width: 100%;
+.h3as th{
+  padding-bottom: 0;
 }
-.formblock_title{
- background-color: #e2e2e2;
- padding: 10px;
-}
-.imginwpbtn{
- position:absolute;
- top: 0;
- left:6px;
- width: 25px;
- height: 25px;
-}
-.card .wpbtn{
- height:auto;padding-left:36px;position:relative;
-}
-.m0{
- margin: 0;
-}
-.container .mtb16{
- margin: 0;
- margin-top: 16px;
- margin-bottom: 16px;
-}
-.clr{
- clear:both
+.allsettings{
+  display: none;
 }
 
+.allsettings.show{
+   display: table-row;
+}
+#tab-1>form>h2{
+  display: none;
+}
+.selector h2{
+  display: inline-block;
+  font-size: 14px;
+margin-left: 8px;
+}
+.selector select{
+    display: inline-block;
+    margin-left: 24px;
+}
+td.pb0{
+padding-bottom: 0 !important;
+}
+span.shortspan{    border: 1px solid #a5a5a5;
+    display: inline-block;
+    padding: 1px 6px;
+    background: #eee;
+    background: linear-gradient(5deg, #dedede, #f1f1f1);
+    color: #000;
+    border-radius: 3px;
+}
+select.shortspan{
+    width: 106px;
+    vertical-align: top;
+    height: 22px;
+    margin: 0 2px;
+    border: 1px solid #a5a5a5;
+    display: inline-block;
+    padding: 1px 6px;
+    background: #eee;
+    background: linear-gradient(5deg, #dedede, #f1f1f1);
+    color: #000;
+    border-radius: 3px;
+}
+#standarttext{
+    float: left;
+    padding: 2px;
+    border: 1px solid #ccc;
+    display: inline-block;
+    margin-top: -24px;
+    position: relative;
+    cursor: pointer;
+}
+#standarttext:hover{
+    cursor: pointer;
+}
+.updated .card {
+	border: none;
+	display: table-cell;
+	width: 50%;
+}
 .light {
     font-weight: normal !important;
 }
@@ -58,6 +90,7 @@ p.light{
 #morkvanp_email_editor_id{
 	color: #423d3d;
 	height: 200px;
+	display: block !important;
 }
 #mceu_24{
 	display: none;
@@ -98,11 +131,14 @@ p.light{
 	width: 100%;
 }
 
-.form-invoice>a {
+.form-invoice>.alink {
 	grid-column: 1 / -1;
 	margin-top: 8px;
+	margin-top: -8px;
 }
-
+.alink a{
+	margin-right: 20px;
+}
 .settingsgrid {
 	display: grid;
 	grid-template-columns: 2fr 1fr;
@@ -148,7 +184,6 @@ td input[type=checkbox] {
 	width: 100%;
 	/* background: #fff; */
 	margin-right: 1%;
-	margin-bottom: 20px;
 }
 
 .tablecontainer table {
@@ -210,7 +245,47 @@ body>#wpfooter {
 .firstrow {
 	width: 400px;
 }
-
+.form-invoice>#messagebox {
+    grid-column: 1 / -1;
+    margin-top: 8px;
+    height: 0px;
+    transition: all 1s ease;
+    overflow: hidden;
+    background: #fff;
+    padding: 0px;
+    margin-left: 0;
+}
+#errno>div{
+	overflow: hidden;
+}
+#errno, #nnnid{
+	opacity: 0;
+	z-index: -10;
+    position: relative;
+}
+#messagebox > div{
+	width: 100%;
+	max-width: 100%;
+}
+#messagebox > div.card {
+    width: 100%;
+    max-width: 100%;
+    border: none;
+    padding: 8px;
+    margin: 0;
+    box-shadow: none;
+}
+#messagebox > div > p{
+	width: 50%;
+	float: left;
+	margin: 0;
+padding: 0;
+color: #23282d;
+}
+#messagebox > div > p br{
+	display: block;
+	margin:0 !important;
+}
 @media screen and (max-width: 1200px) {
 	.idrow {
 		display: none;
@@ -338,27 +413,7 @@ body>#wpfooter {
 		display: block;
 	}
 }
-#wpbody-content > .container > div:not(.row){
-	width: auto;
-	background: #fff;
-	display: inline-block;
 
-	padding: 8px;
-}
-.updatedpro{
-	margin-top: -13px !important;
-}
-.card{
-	max-width: 100%;
-}
-.grr{
-    display: grid;
-    grid-template-columns: 2fr 1fr;
-    grid-gap: 20px;
-}
-.tab-pane li{
-	margin-left: 20px;
-}
 @media screen and (max-width: 500px) {
 	.firstrow {
 		width: 58px;
@@ -366,50 +421,4 @@ body>#wpfooter {
 	.firstrow a {
 		word-wrap: break-word;
 	}
-}
-.form-invoice>#messagebox {
-    grid-column: 1 / -1;
-    margin-top: 8px;
-    height: 0px;
-    transition: all 1s ease;
-    overflow: hidden;
-    background: #fff;
-    padding: 0px;
-}
-#errno>div{
-	overflow: hidden;
-}
-#messagebox > div{
-	width: 100%;
-	max-width: 100%;
-}
-#messagebox > div.card {
-    width: 100%;
-    max-width: 100%;
-    border: none;
-    padding: 8px;
-    margin: 0;
-        box-shadow: none;
-}
-#messagebox > div > p{
-	width: 49%;
-	float: left;
-  color: #23282d;
-}
-#messagebox > div > p br{
-	display: block;
-	margin:0 !important;
-}
-#nnnid{
-  opacity: 0 !important;
-}
-#errno, #nnnid{
-	opacity: 0;
-	z-index: -10;
-  position: relative;
-}
-#messagebox h3 {
-  width: 99%;
-  display: inline-block;
-  float: left;
 }

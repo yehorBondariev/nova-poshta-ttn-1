@@ -26,5 +26,6 @@ class MNP_Plugin_Deactivator {
 	 */
 	public static function deactivate() {
         flush_rewrite_rules();
+				//require_once('wos_deactivate.php');
 	}
 }

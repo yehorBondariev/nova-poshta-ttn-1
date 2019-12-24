@@ -1,139 +1,45 @@
+**Edit a file, create a new file, and clone from Bitbucket in under 2 minutes**
 
+When you're done, you can delete the content in this README and update the file with details for others getting started with your repository.
 
-Створюйте експрес-накладні автоматично, на сторінці замовлення. Менше часу витрачайте на відправку.
+*We recommend that you open this README in another tab as you perform the tasks below. You can [watch our video](https://youtu.be/0ocf7u76WSo) for a full demo of all the steps in this tutorial. Open the video in a new tab to avoid leaving Bitbucket.*
 
+---
 
+## Edit a file
 
-Плагін допомагає автоматизувати процес відправки ваших замовлень через Нову Пошту. На сторінці замовлення можна згенерувати експрес накладну із даних, які вносив покупець при оформленні. Ви просто приходите на відділення і кажете номер накладної менеджеру.
+You’ll start by editing this README file to learn how to edit a file in Bitbucket.
 
+1. Click **Source** on the left side.
+2. Click the README.md link from the list of files.
+3. Click the **Edit** button.
+4. Delete the following text: *Delete this line to make a change to the README from Bitbucket.*
+5. After making your change, click **Commit** and then **Commit** again in the dialog. The commit page will open and you’ll see the change you just made.
+6. Go back to the **Source** page.
 
-Для роботи цього плагіна, потрібен плагін доставки Нової Пошти Woo Shipping for Nova Poshta https://wordpress.org/plugins/woo-shipping-for-nova-poshta
+---
 
+## Create a file
 
-Інструкція
+Next, you’ll add a new file to this repository.
 
-1. Встановіть і активуйте плагін
+1. Click the **New file** button at the top of the **Source** page.
+2. Give the file a filename of **contributors.txt**.
+3. Enter your name in the empty file space.
+4. Click **Commit** and then **Commit** again in the dialog.
+5. Go back to the **Source** page.
 
-2. На сторінці налаштувань плагіна, введіть ключ АРІ Нової Пошти
+Before you move on, go ahead and explore the repository. You've already seen the **Source** page, but check out the **Commits**, **Branches**, and **Settings** pages.
 
-3. Введіть номер телефона відправника в форматі 380...
+---
 
-4. Переконайтеся, що ви активували і налаштували плагін Woo Shipping for Nova Poshta
+## Clone a repository
 
+Use these steps to clone from SourceTree, our client for using the repository command-line free. Cloning allows you to work on your files locally. If you don't yet have SourceTree, [download and install first](https://www.sourcetreeapp.com/). If you prefer to clone from the command line, see [Clone a repository](https://confluence.atlassian.com/x/4whODQ).
 
+1. You’ll see the clone button under the **Source** heading. Click that button.
+2. Now click **Check out in SourceTree**. You may need to create a SourceTree account or log in.
+3. When you see the **Clone New** dialog in SourceTree, update the destination path and name if you’d like to and then click **Clone**.
+4. Open the directory you just created to see your repository’s files.
 
-Підтримка
-
-Якщо виникла помилка при встановленні чи використанні плагіна - пишіть на hello@morkva.co.ua або в нашу групу в Facebook https://www.facebook.com/groups/morkvasupport/.
-
-
-
-== Frequently Asked Questions ==
-
-= В якому форматі вводити номер телефону одержувача? =
-
-Вводьте в форматі 380ХХХХХХХ
-
-= Чи потрібно мені вводити дані відправника кожного разу? =
-
-Дані відправника ви вводите один раз.
-
-= Чи потрібно мені вводити дані отримувача кожного разу? =
-
-Ні, плагін використовує дані з форми замовлення.
-
-= Чи рахує плагін вартість доставки? =
-
-Ні, плагін лише формує накладну.
-
-= Чи зберігається номер накладної? =
-
-Так, номер накладної зберігається в примітках.
-
-= Чи можна змінити платника? =
-
-Така можливість (як і багато інших) вже є у Pro версії.
-
-= Чи можна змінити оголошену вартість? =
-
-Така можливість (як і багато інших) вже є у Pro версії.
-
-
-== Screenshots ==
-
-1. Натисніть кнопку "Створити накладну" на сторінці замовлення
-2. Додайте опис відправлення (наприклад: сир, арахісова паста, продукти харчування) і натисніть кнопку "Створити"
-3. Номер накладної з'явиться внизу сторінки. Скопіюйте його та відправте клієнту
-4. Налаштування плагіна
-
-Що нового?
-
-
-= 1.0.15 =
-* [fix] виправлено баги
-* [new] додано ряд перевірок логіки при створенні накладної
-* [new] при неправильному введенні даних в форму, відображається і код і роз'яснення помилки
-
-= 1.0.14 =
-* [new] перехід від bootstrap дизайну до wp core дизайну 
-* [new] додано валідацію ПІБ на кирилицю
-* [new] Оптимізація коду
-
-= 1.0.13 =
-* [new] додано freemius tracking 
-
-= 1.0.12 =
-* [new] додано валідацію ПІБ 
-* [fix] дані отримувача беруться з полів billing
-
-= 1.0.11 =
-* [fix] на деяких сайтах місто одержувача завжди створювало як "Авангард"
-
-= 1.0.10 =
-* [fix] неправильно створювалася адреса відділення відправника
-* [fix] різні дрібні правки
-* [new] Налаштування Області, Міста, Відділення тепер повністю беруться з плагіна Woo Shipping for Nova Poshta
-* Формуємо ранній список бажаючих на Pro версію 
-
-
-= 1.0.8 =
-* [fix] неправильно створювалася адреса відділення отримувача
-* [new] Номер створеної накладної тепер записується у Нотатки на сторінці редагування замовлення
-
-
-= 1.0.7 =
-* [fix] більше не впливає на роботу стилів всього сайту
-
-= 1.0.5 =
-* [fix] не зберігався ключ АРІ
-* інші дрібні виправлення
-
-
-== Changelog ==
-
-= 1.0.15 =
-* [fix] виправлено баги
-* [new] додано ряд перевірок логіки при створенні накладної
-* [new] при неправильному введенні даних в форму, відображається і код і роз'яснення помилки
-
-= 1.0.14 =
-* [new] перехід від bootstrap дизайну до wp core дизайну 
-* [new] додано валідацію ПІБ на кирилицю
-* [new] Оптимізація коду
-
-= 1.0.13 =
-* [new] додано freemius tracking 
-
-= 1.0.12 =
-* [new] додано валідацію ПІБ 
-* [fix] дані отримувача беруться з полів billing
-
-= 1.0.11 =
-* [fix] на деяких сайтах місто одержувача завжди створювало як "Авангард"
-
-= 1.0.10 =
-* [fix] неправильно створювалася адреса відділення відправника
-* [fix] різні дрібні правки
-* [new] Налаштування Області, Міста, Відділення тепер повністю беруться з плагіна Woo Shipping for Nova Poshta
-* Формуємо ранній список бажаючих на Pro версію 
-
+Now that you're more familiar with your Bitbucket repository, go ahead and add a new file locally. You can [push your change back to Bitbucket with SourceTree](https://confluence.atlassian.com/x/iqyBMg), or you can [add, commit,](https://confluence.atlassian.com/x/8QhODQ) and [push from the command line](https://confluence.atlassian.com/x/NQ0zDQ).
