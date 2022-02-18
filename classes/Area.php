@@ -3,6 +3,7 @@
 namespace plugins\NovaPoshta\classes;
 
 use NovattnPoshta;
+use NovattnPoshtaPoshtomat;
 use plugins\NovaPoshta\classes\base\Base;
 use plugins\NovaPoshta\classes\repository\AbstractAreaRepository;
 use stdClass;
@@ -22,6 +23,7 @@ abstract class Area extends Base
     const KEY_REGION = 'nova_poshta_region';
     const KEY_CITY = 'nova_poshta_city';
     const KEY_WAREHOUSE = 'nova_poshta_warehouse';
+    const KEY_POSHTOMAT = 'nova_poshta_poshtomat';
 
     const BILLING = 'billing';
     const SHIPPING = 'shipping';
@@ -96,9 +98,11 @@ abstract class Area extends Base
      */
     protected function getDescription()
     {
-        return (($this->locale == NovattnPoshta::LOCALE_RU) && $this->content->description_ru)
-            ? $this->content->description_ru
-            : $this->content->description;
+        if ( is_object( $this->content ) ) {
+            return (($this->locale == NovattnPoshta::LOCALE_RU) && $this->content->description_ru)
+                ? $this->content->description_ru
+                : $this->content->description;
+        } else return false;
     }
 
     /**

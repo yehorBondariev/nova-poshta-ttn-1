@@ -1,4 +1,6 @@
 <div>
+
+
 <div class="updated updatedpro mtb16 p0"  >
 <div class="card">
     <div class="card-header">
@@ -15,11 +17,10 @@
 
     <p>Щось не працює? (версія <?php echo MNP_PLUGIN_VERSION; ?>) <br> можливо, в оновленій версії уже вирішена ваша проблема (див. список змін)</p>
       <?php
-$path = PLUGIN_PATH . '/public/partials/morkvanp-plugin-invoices-page.php';
-if(!file_exists($path)){ ?>
+$path = NOVA_POSHTA_TTN_SHIPPING_PLUGIN_DIR . '/public/partials/morkvanp-plugin-invoices-page.php';
+if (!file_exists($path)) { ?>
     <a href="plugin-install.php?tab=plugin-information&amp;plugin=nova-poshta-ttn&amp;section=changelog&amp;TB_iframe=true&amp;width=772&amp;height=374" class="thickbox open-plugin-details-modal" >встановити останню версію плагіна</a>
-<?php }
-else{ ?>
+<?php } else { ?>
  <a href="plugin-install.php?tab=plugin-information&amp;plugin=nova-poshta-ttn-pro&amp;section=changelog&amp;TB_iframe=true&amp;width=772&amp;height=374" class="thickbox open-plugin-details-modal" >встановити останню версію плагіна</a>
 <?php } ?>
   </div>
@@ -30,8 +31,8 @@ else{ ?>
 
 </div>
 <?php
-$path = PLUGIN_PATH . '/public/partials/morkvanp-plugin-invoices-page.php';
-if(!file_exists($path)){ ?>
+$path = NOVA_POSHTA_TTN_SHIPPING_PLUGIN_DIR . '/public/partials/morkvanp-plugin-invoices-page.php';
+if (!file_exists($path)) { ?>
 
   <div class="card">
         <div class="card-header">

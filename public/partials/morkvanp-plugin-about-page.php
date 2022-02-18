@@ -5,27 +5,27 @@ use plugins\NovaPoshta\classes\DatabaseSync;
 require("functions.php");
 mnp_display_nav();
 
+
 function is_it_a_shop_order($givenNumber){
-	if(get_post_type($givenNumber) == "shop_order"){
-	        return true;
-	    }
-	else{
-	        return false;
-	  }
+	if(get_post_type($givenNumber) == "shop_order"){return true;}
+    return false;
 }
 
 function get_last_order_id(){
-	global $wpdb;
-	$statuses = array_keys(wc_get_order_statuses());
-	$statuses = implode( "','", $statuses );
+	if ( class_exists( 'WooCommerce' ) ) {	
+        global $wpdb;
+        $statuses = array_keys(wc_get_order_statuses());
+        $statuses = implode( "','", $statuses );
 
-	// Getting last Order ID (max value)
-	$results = $wpdb->get_col( "
-		SELECT MAX(ID) FROM {$wpdb->prefix}posts
-		WHERE post_type LIKE 'shop_order'
-		AND post_status IN ('$statuses')
-			    " );
-   	return reset($results);
+        // Getting last Order ID (max value)
+        $results = $wpdb->get_col( "
+            SELECT MAX(ID) FROM {$wpdb->prefix}posts
+            WHERE post_type LIKE 'shop_order'
+            AND post_status IN ('$statuses')
+                    " );
+        return reset($results);
+    }
+    return null;
 }
 
 if(isset($_GET['test'])){
@@ -67,8 +67,6 @@ if(isset($_GET['test'])){
 	}
 
 
-
-
 		echo "<br><hr><br><div>
 				<h2>Тест автостворення накладних</h2>
 				<form action=admin.php method=get>
@@ -96,7 +94,7 @@ if(isset($_GET['test'])){
 					<li>2. При замовленнях з методом доставки "Нова пошта" від  плагіну <?php echo MNP_PLUGIN_NAME ?> формуватимуться автоматично</li>
 					<li>3. Бажано перевірити кілька накладних, щоб переконатись, що автоматичне створення йде правильно. Перевірити можна з допомогою відповідного <a href=#test>пункту</a> на цій сторінці.</li>
 				</p>
-				<p id=test >Автоматичне створення працює з типом доставки Відділення-Відділення. Підтримка Адресної доставки буде додана згоом</p>
+				<p id=test >Автоматичне створення працює з типом доставки Відділення-Відділення. Підтримка Адресної доставки буде додана згодом</p>
 			</div>
 			<hr>
 			<div >
@@ -118,10 +116,14 @@ if(isset($_GET['test'])){
 	        DatabaseSync::instance()->synchroniseLocations();
 				}
 				global $wpdb;
-				$results = $wpdb->get_results( 'select distinct updated_at from wp_nova_poshta_region');
+				$results = $wpdb->get_results( 'select distinct updated_at from '.$wpdb->prefix.'nova_poshta_region');
 				$time = $results[0]->updated_at;
+				$r2=$wpdb->get_results('SELECT COUNT(`ref`) as result  FROM `'.$wpdb->prefix.'nova_poshta_city`');
+				$r2w = $r2[0]->result;
+				$r3=$wpdb->get_results('SELECT COUNT(`ref`) as result FROM `'.$wpdb->prefix.'nova_poshta_warehouse`');
+				$r3w = $r3[0]->result;
 				?>
-				Останнє оновлення бази відбулось: <?php echo date("Y-m-d H:i:s", $time); ?> (UTC+0)<form action="admin.php?page=morkvanp_about" method="post" style="display: inline;display: inline-flex;margin-left: 10px;">
+				Останнє оновлення бази (<?php echo $r2w . ' міст / ' .$r3w; ?> відділень) відбулось: <?php echo date("Y-m-d H:i:s", $time); ?> (UTC+0)<form action="admin.php?page=morkvanp_about" method="post" style="display: inline;display: inline-flex;margin-left: 10px;">
 					<input type="submit" name=upds value="Оновити" class="button">
 				</form>
 			</div>

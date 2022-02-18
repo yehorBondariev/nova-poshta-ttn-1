@@ -6,10 +6,10 @@ use plugins\NovaPoshta\classes\repository\AbstractAreaRepository;
 use plugins\NovaPoshta\classes\repository\AreaRepositoryFactory;
 
 /**
- * Class Warehouse
+ * Class poshtomat
  * @package plugins\NovaPoshta\classes
  */
-class Warehouse extends Area
+class Poshtomat extends Area
 {
 
     /**
@@ -17,8 +17,7 @@ class Warehouse extends Area
      */
     protected static function _key()
     {
-        //return '_warehouse';
-        return 'nova_poshta_warehouse';
+        return 'nova_poshta_poshtomat';
     }
 
     /**
@@ -26,6 +25,6 @@ class Warehouse extends Area
      */
     protected function getRepository()
     {
-        return AreaRepositoryFactory::instance()->warehouseRepo();
+        return AreaRepositoryFactory::instance()->poshtomatRepo();
     }
 }

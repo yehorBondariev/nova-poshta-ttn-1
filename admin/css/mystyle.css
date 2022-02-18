@@ -1,3 +1,35 @@
+.gridttn input[type=text], .gridttn select, .gridttn textarea{
+	width: 100%;
+}
+.gridttn.h3cont div{
+	background: none;
+	border: none;
+    text-align: center;
+		    padding: 0;
+}
+.gridttn{
+	display: grid;grid-template-columns: 1fr 1fr 1fr;grid-gap: 16px;
+}
+.gridttn>div{
+	border: 1px solid #ccc;
+	padding: 10px ;
+	background: #fff;
+}
+.gridttn h4{
+	margin: 0;
+	border-bottom: 1px solid;
+    text-align: center;
+    margin-top: -10px;
+    padding: 4px;
+	background: rgba(255,255,255,1);
+background: -moz-linear-gradient(left, rgba(255,255,255,1) 0%, rgba(214,214,214,1) 51%, rgba(255,255,255,1) 100%);
+background: -webkit-gradient(left top, right top, color-stop(0%, rgba(255,255,255,1)), color-stop(51%, rgba(214,214,214,1)), color-stop(100%, rgba(255,255,255,1)));
+background: -webkit-linear-gradient(left, rgba(255,255,255,1) 0%, rgba(214,214,214,1) 51%, rgba(255,255,255,1) 100%);
+background: -o-linear-gradient(left, rgba(255,255,255,1) 0%, rgba(214,214,214,1) 51%, rgba(255,255,255,1) 100%);
+background: -ms-linear-gradient(left, rgba(255,255,255,1) 0%, rgba(214,214,214,1) 51%, rgba(255,255,255,1) 100%);
+background: linear-gradient(to right, rgba(255,255,255,1) 0%, rgba(214,214,214,1) 51%, rgba(255,255,255,1) 100%);
+filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#ffffff', endColorstr='#ffffff', GradientType=1 );
+}
 .nav-tabs {
 	float: left;
 	width: 100%;

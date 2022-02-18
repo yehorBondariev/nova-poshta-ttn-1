@@ -33,6 +33,26 @@ class Options extends Base
     const OPTION_FIXED_PRICE = 'fixed_price';
     const OPTION_PLUGIN_RATED = 'plugin_rated';
 
+    const FREE_SHIPPING_MIN_SUM = 'free_shipping_min_sum';
+    const FREE_SHIPPING_TEXT = 'free_shipping_text';    
+
+
+    /**
+     * @return float
+     */
+    protected function getFreeShippingMinSum()
+    {
+        return $this->shippingMethodSettings ? (float)$this->shippingMethodSettings[self::FREE_SHIPPING_MIN_SUM] : 0.00;
+    }
+
+    /**
+     * @return text
+     */
+    protected function getUseFreeShippingText()
+    {
+        return $this->useFreeShippingText ? $this->shippingMethodSettings[self::FREE_SHIPPING_MIN_TEXT] : '';
+    }  
+
     /**
      * @return void
      */
@@ -53,7 +73,7 @@ class Options extends Base
      */
     protected function getUseFixedPriceOnDelivery()
     {
-        return filter_var($this->shippingMethodSettings[self::USE_FIXED_PRICE_ON_DELIVERY], FILTER_VALIDATE_BOOLEAN);
+        return filter_var($this->shippingMethodSettings[self::USE_FIXED_PRICE_ON_DELIVERY], FILTER_SANITIZE_STRING);
     }
 
     /**

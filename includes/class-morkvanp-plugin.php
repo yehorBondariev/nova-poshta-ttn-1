@@ -89,11 +89,15 @@ class MNP_Plugin {
 	 * @access   private
 	 */
 	private function load_dependencies() {
+		$path = PLUGIN_PATH . '/public/partials/morkvanp-plugin-invoices-page.php';
 		/**
 		 * The class responsible for orchestrating the actions and filters of the
 		 * core plugin.
 		 */
 		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'includes/class-morkvanp-plugin-loader.php';
+		if (file_exists($path)) {
+			require_once plugin_dir_path( dirname( __FILE__ ) ) . 'includes/class-morkvanp-plugin-loader-pro.php';
+		}
 		/**
 		 * The class responsible for defining internationalization functionality
 		 * of the plugin.
@@ -108,6 +112,9 @@ class MNP_Plugin {
 		 */
 		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'public/class-morkvanp-plugin-public.php';
 		$this->loader = new MNP_Plugin_Loader();
+		if (file_exists($path)) {
+			$this->loader = new MNP_Plugin_Loader_Pro();
+		}
 	}
 	/**
 	 * Define the locale for this plugin for internationalization.

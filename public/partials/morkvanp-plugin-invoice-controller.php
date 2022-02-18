@@ -85,6 +85,9 @@ class MNP_Plugin_Invoice_Controller {
 
 	public $invoice_volume;
 
+
+	public $servicetype;
+
 	#--------------------          POST Data         --------------------
 
 	public function setPosts()
@@ -108,9 +111,22 @@ class MNP_Plugin_Invoice_Controller {
 		if ( isset( $_POST['invoice_recipient_city'] ) ) { $this->recipient_city = $_POST['invoice_recipient_city']; }
 		if ( isset( $_POST['invoice_recipient_building'] ) ) { $this->recipient_house = $_POST['invoice_recipient_building']; }
 		if ( isset( $_POST['invoice_recipient_region'] ) ) { $this->recipient_area_regions = $_POST['invoice_recipient_region']; }
-		if ( isset( $_POST['invoice_recipient_warehouse'] ) ) { $this->recipient_address_name = $_POST['invoice_recipient_warehouse']; }
+
+
+		$this->recipient_address_building = 1;
+		if ( isset( $_POST['invoice_recipient_warehouse_building'] ) ) { $this->recipient_address_building = $_POST['invoice_recipient_warehouse_building']; }
+
+
+		// if ( isset( $_POST['invoice_recipient_warehouse'] ) ) { $this->recipient_address_name = $_POST['invoice_recipient_warehouse']; }
+		if ( isset( $_POST['billing_nova_poshta_warehouse'] ) ) { $this->recipient_address_name = $_POST['billing_nova_poshta_warehouse']; }
+		if ( isset( $_POST['addresstext'] ) ) { $this->recipient_address_name = $_POST['addresstext']; }
 		if ( isset( $_POST['invoice_recipient_datetime'] ) ) { $this->datetime = $_POST['invoice_recipient_datetime']; }
 		if ( isset( $_POST['invoice_recipient_phone'] ) ) { $this->recipient_phone = $_POST['invoice_recipient_phone']; }
+		if ( isset( $_POST['recipient_address_flat '] ) ) { $this->recipient_address_flat = $_POST['recipient_address_flat']; }
+		else{
+			$this->recipient_address_flat  = "";
+		}
+
 		if ( isset( $_POST['invoice_description'] ) ) { $this->invoice_description = str_replace("\'","'",$_POST['invoice_description']); }
 		if(isset( $_POST['invoice_descriptionred']) && !empty($_POST['invoice_descriptionred'])){$this->$invoice_descriptionred = $_POST['invoice_descriptionred'] ;}
 
@@ -126,12 +142,15 @@ class MNP_Plugin_Invoice_Controller {
 		if ( isset( $_POST['invoice_redelivery'] ) ) { $this->redelivery = $_POST['invoice_redelivery']; }
 		if ( isset( $_POST['invoice_places'] ) ) { $this->invoice_places = $_POST['invoice_places']; }
 
+
+		//DoorsDoors, DoorsWarehouse, WarehouseWarehouse, WarehouseDoors
+
 		if ( isset( $_POST['invoice_x'] ) ) { $this->invoice_x = $_POST['invoice_x']; }
 		if ( isset( $_POST['invoice_y'] ) ) { $this->invoice_y = $_POST['invoice_y']; }
 		if ( isset( $_POST['invoice_z'] ) ) { $this->invoice_z = $_POST['invoice_z']; }
 
 		if ( isset( $_POST['invoice_volume'] ) ) { $this->invoice_volume = $_POST['invoice_volume']; }
-		// 
+		//
 		// echo '<pre>';
 	  // print_r($this);
 	  // echo '</pre><hr>';

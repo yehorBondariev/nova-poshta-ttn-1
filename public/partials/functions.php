@@ -1,5 +1,14 @@
 <?php
 
+if ( ! function_exists( 'is_woocommerce_activated_np' ) ) {
+        function is_woocommerce_activated_np() {
+          if ( in_array( 'woocommerce/woocommerce.php', apply_filters( 'active_plugins', get_option( 'active_plugins' ) ) ) ){
+            return true;
+          }
+          return false;
+        }
+}
+
 function process_warehouse_billing($order_data){
 
 //if isset billing address set up warehouse billing array
@@ -29,8 +38,15 @@ else if ( isset( $order_data["shipping"]["address_1"] ) ) {
   }
 }
 else {
-  $billing_address[0] = "";
-  $billing_address[1] = "";
+  $billing_address = $_POST['invoice_recipient_warehouse'] ?? ''; // Якщо створювати накладну без замовлення
+  $warehouse_billing = explode(" ", $billing_address);
+  $warehouse_billing = str_replace([":", "№"], "", $warehouse_billing);
+  if (empty($warehouse_billing[1])) {
+    unset($warehouse_billing[1]);
+  }
+  else {
+    $warehouse_billing[2] = $warehouse_billing[3];
+  }
 }
 
 //if premmerce active process warehouse array as needed
@@ -44,20 +60,29 @@ else {
 }
 
 //if isset array of $warehouse_billing set [2]element
-if(isset( $warehouse_billing )){
- if ((strpos($warehouse_billing[0], 'Почтомат') !== false) || (strpos($warehouse_billing[0], 'Поштомат') !== false)) {
-   $num = sizeof($warehouse_billing) - 1;
-   $warehouse_billing[2] = str_replace(")", "", $warehouse_billing[$num]);
+if(isset( $warehouse_billing )){ // На поштомат без замовлення
+ if ( ( strpos( $warehouse_billing[0], 'Почтомат' ) !== false) ||
+    ( strpos( $warehouse_billing[0], 'Почтмат' ) !== false) ||
+    (strpos($warehouse_billing[0], 'Поштомат') !== false)) {
+    $warehouse_billing[2] = $warehouse_billing[3];
+} else { // На відділення без замовлення
+   $warehouse_billing[2] = $warehouse_billing[1] ?? '';
  }
 }
-//if only one warwhouse but number not described
-if(isset( $warehouse_billing )){
- if (strpos($warehouse_billing[1], 'приймання-видачі') !== false) {
+
+//if village with only one warwhouse but number not described
+if(isset( $warehouse_billing[1] )){
+ if (strpos($warehouse_billing[1], 'приймання') !== false) {
+   $warehouse_billing[2] = 1;
+ }
+ if (strpos($warehouse_billing[1], 'приема') !== false) {
    $warehouse_billing[2] = 1;
  }
 }
 
-return $warehouse_billing;
+return $warehouse_billing ?? '';
+
+
 
 }
 
@@ -87,6 +112,28 @@ function getCounterpartiestoref(){
 
 }
 
+
+function getsendersaddr(){
+  $ref =  getCounterpartiestoref();
+
+  $url = 'https://api.novaposhta.ua/v2.0/json/Counterparty/json/getCounterparties';
+  $data = array('apiKey' => get_option('text_example'), 'modelName' => 'Counterparty', 'calledMethod'=> 'getCounterparties', 'methodProperties'=> array('Ref'=>$ref, "CounterpartyProperty"=>"Sender"));
+
+  $resultgetCounterparties = httpPost($url, $data);
+
+ $resultgetCounterparties = json_decode($resultgetCounterparties);
+
+  $totals = $resultgetCounterparties->info->totalCount;
+
+  //$resultgetCounterparties = $resultgetCounterparties->data;
+
+  //$resultgetCounterparties = explode(" ", $resultgetCounterparties);
+
+
+  return $resultgetCounterparties;
+}
+
+
 function getsenders(){
   $ref =  getCounterpartiestoref();
 
@@ -102,7 +149,6 @@ function getsenders(){
   $resultgetCounterparties = $resultgetCounterparties->data;
 
   //$resultgetCounterparties = explode(" ", $resultgetCounterparties);
-
 
   return $resultgetCounterparties;
 }
@@ -127,24 +173,23 @@ function convertweight($weight_unit, $weight_total){
   return $weight_total;
 }
 
-function get_shipping_phone($order_data){
+function get_shipping_phone($order_data) {
   //set up billing/shipping phone
   $shipping_phone = '';
-  if ( isset($order_data["billing"]["phone"]) ) {
+  if ( isset( $order_data['id'] ) && get_post_meta( $order_data['id'],'_shipping_phone', true ) ) {
+      $shipping_phone = get_post_meta( $order_data['id'],'_shipping_phone',true );
+  } elseif ( isset($order_data["billing"]["phone"]) ) {
     $shipping_phone = $order_data["billing"]["phone"];
   }
-  else if ( isset($order_data["shipping"]["phone"]) ) {
-    $shipping_phone = $order_data["shipping"]["phone"];
+  else { // Якщо створювати накладну без замовлення
+    $shipping_phone = $_POST['invoice_recipient_phone'] ?? '';
   }
-  else {
-    $shipping_phone = "";
-  }
+  $shipping_phone = strtr($shipping_phone, [' '=>'', ')'=>'', '('=>'', '+'=>'']);
   //if phone need to be fulled
   if(strlen($shipping_phone)==9){
     $shipping_phone = '380'.$shipping_phone;
   }
   return $shipping_phone;
-
 }
 
 function get_shipping_name($order_data){
@@ -190,6 +235,7 @@ function alternate_all($order_data){
   $prod_quantity2 = 0;
   $list = '';
   $list2 = '';
+  $list3 = '';
   $descr = '';
 
   //alternative weight functions
@@ -229,6 +275,7 @@ function alternate_all($order_data){
               }
               $name = $product->get_title();
               $list2  .= $name .$sku. ' x '.$quantity.'шт ;';
+              $list3  .= $sku. ' x '.$quantity.'шт ;';
               $list  .= $name .' x '.$quantity.'шт ;';
               $prod_quantity += 1;
               $prod_quantity2 += $quantity;
@@ -242,6 +289,7 @@ function alternate_all($order_data){
           }
           $name = $product->get_title();
           $list2  .= $name .$sku. ' x '.$quantity.'шт ;';
+          $list3  .= $sku. ' x '.$quantity.'шт ;';
           $list  .= $name . ' x '.$quantity.'шт ;';
           $prod_quantity += 1;
           $prod_quantity2 += $quantity;
@@ -265,11 +313,11 @@ function alternate_all($order_data){
       }
     }
   }
-  $alternate_vol=0;
+  $alternate_vol = $d_vol_all;
   $volumemessage = '';
-  if((sizeof($dimentions) > 1)){
+  if( $prod_quantity2 > 1 ){
     $alternate_vol = $d_vol_all;
-    $volumemessage = 'УВАГА! В відправленні кілька товарів. Ми порахували арифметичний сумарний об\'єм посилки, враховуючи мета-дані товарів. Ви можете змінити об\'єм зараз вручну, щоб бути більш точним.' ;
+    $volumemessage = '<span style="color: #dc3232;">УВАГА! </span> У Відправленні кілька товарів. Об\'єм пораховано з даних про товари. <span style="font-size: 12px;"> Довжина та ширина Відправлення - максимальний розмір товару у Замовленні. Висота дорівнює висоті обраної в налаштуваннях комірки. Ви можете вказати більш точне число.</span>' ;
   }
   else{
   	if ( isset($variations) ){
@@ -286,13 +334,18 @@ function alternate_all($order_data){
     'volumemessage'=>$volumemessage,
     'list'=>$list,
     'list2'=>$list2,
+    'list3'=>$list3,
     'prod_quantity'=>$prod_quantity,
-    'prod_quantity2'=>$prod_quantity2
+    'prod_quantity2'=>$prod_quantity2,
+    'dimentions'=>$dimentions,
+    'weighte'=>$weighte,
+    'd_vol_all'=>$d_vol_all
   );
   return $arrayreturn;
 }
-function decodedescription($descriptionarea, $list2,  $list, $prod_quantity, $prod_quantity2, $total ){
+function decodedescription($descriptionarea, $list3, $list2,  $list, $prod_quantity, $prod_quantity2, $total ){
   $descriptionarea = str_replace("[list_qa]", $list2, $descriptionarea);
+  $descriptionarea = str_replace("[list_a]", $list3, $descriptionarea);
   $descriptionarea = str_replace("[list]", $list, $descriptionarea);
   $descriptionarea = str_replace("[q]", $prod_quantity, $descriptionarea);
   $descriptionarea = str_replace("[qa]", $prod_quantity2, $descriptionarea);
@@ -323,7 +376,7 @@ function loadsrcs(){?>
   <?php
 }
 
- function mnp_display_nav(){//display nav bar
+ function mnp_display_nav(){ // Display tabs
 
   $arr_of_pages = array(
     array(
@@ -354,18 +407,67 @@ function loadsrcs(){?>
 
   echo "</nav>";
 
+  global $wpdb;
+  $citiescountsqlobject=$wpdb->get_results('SELECT COUNT(`ref`) as result  FROM `'.$wpdb->prefix.'nova_poshta_city`');
+  $citycountsqlobjectresult = $citiescountsqlobject[0]->result;
+  $warehousecountsqlobject=$wpdb->get_results('SELECT COUNT(`ref`) as result FROM `'.$wpdb->prefix.'nova_poshta_warehouse`');
+  $warehousecountsqlobjectresult = $warehousecountsqlobject[0]->result;
+   if ( ($citycountsqlobjectresult < 4300) || ($warehousecountsqlobjectresult < 6000) ){
+
+  echo '<div id="message" class="error ml0"style="margin:10px 0"><p style="color:#000">База відділень/міст потребує ручного оновлення!
+  Щодня Нова Пошта додає нові відділення, і плагін періодично все це актуалізує. Але останнього разу щось пішло не так. Рекомендуємо оновити базу для коректної роботи плагіна .</p>
+  <form action="admin.php?page=morkvanp_about" method="post" style="display: inline;display: inline-flex;margin-left: 10px;">
+  	<input type="submit" name="upds" value="Оновити базу" class="button"><br>
+  </form>
+<p  style="color:#000">Оновлення може зайняти 10-20 секунд. <span style="color:#dc3232;">Для оновлення  бази потрібен дійсний API ключ нової пошти</span></p>
+        </div>';
+      }
+
 
 }
 
-function formlinkbox($id){//displat top link box
-  echo '<div class="alink">';
-    if ( !empty( $id ) ) {
-      echo '<a class="btn" href="/wp-admin/post.php?post=' . $id . '&action=edit">Повернутись до замовлення</a>';
-      echo '';
+function formlinkbox($id){ // Display top link box
+    echo '<div class="alink">';
+    if ( !empty( $id ) && -1 != $id ) { // Якщо створювати накладну без замовлення, то повернутись до замовлення не можна
+        echo '<a class="btn" href="/wp-admin/post.php?post=' . $id . '&action=edit">Повернутись до замовлення</a>';
     }
     echo '<a href="edit.php?post_type=shop_order" >Повернутись до замовлень</a>';
+    echo '<a class="btn" href="admin.php?page=morkvanp_invoice&newttn=1">Накладна без замовлення</a>';
+    echo '</div>';
+}
 
-echo '</div>';
+function process_shipping_settings($arr)
+{
+
+  if(!empty( get_option( 'woocommerce_nova_poshta_shipping_method_city_name' )) )
+  {
+    $arr['city_name']=get_option('woocommerce_nova_poshta_shipping_method_city_name');
+  }
+  if(!empty( get_option( 'woocommerce_nova_poshta_shipping_method_area_name' )) )
+  {
+  $arr['area_name']=get_option('woocommerce_nova_poshta_shipping_method_area_name');
+  }
+  if(!empty( get_option( 'woocommerce_nova_poshta_shipping_method_area' )) )
+  {
+  $arr['area']=get_option('woocommerce_nova_poshta_shipping_method_area');
+}
+
+if(!empty( get_option( 'woocommerce_nova_poshta_shipping_method_city' )) )
+{
+  $arr['city']=get_option('woocommerce_nova_poshta_shipping_method_city');
+}
+if(!empty( get_option( 'woocommerce_nova_poshta_shipping_method_warehouse_name' )) )
+{
+  $arr['warehouse_name']=get_option('woocommerce_nova_poshta_shipping_method_warehouse_name');
+}
+if(!empty( get_option( 'woocommerce_nova_poshta_shipping_method_warehouse' )) )
+{
+  $arr['warehouse']=get_option('woocommerce_nova_poshta_shipping_method_warehouse');
+  }
+
+
+return $arr;
+
 }
 function formblock_title($string){
   echo "<tr>
@@ -383,7 +485,7 @@ function formblock_sender($name, $shipping_settings, $phone,$descriptionarea  ){
     <th scope=\"row\">
       <label for=\"sender_name\">Відправник (П. І. Б)</label>
     </th>
-        <td><select class=custom-select v-model=selected  id=invoice_sender_ref name=invoice_sender_ref style=max-width:166px;>";
+        <td><select class=custom-select v-model=selected  id=invoice_sender_ref name=invoice_sender_ref style=min-width:100%;>";
     for($s=0; $s<sizeof($senders); $s++){
       echo '<option namero="'.$senders[$s]->Description.'" phone="'.$senders[$s]->Phones.'" value='.$senders[$s]->Ref.'>'.$senders[$s]->Description.' '.$senders[$s]->Phones.'</option>';
 
@@ -391,7 +493,7 @@ function formblock_sender($name, $shipping_settings, $phone,$descriptionarea  ){
 
     echo "</select>
          <script></script>";
-    echo "<input style=display:none type=\"text\" id=\"sender_name\" name=\"invoice_sender_name\" class=\"input sender_name\" value=\" "
+    echo "<input style=display:none type=\"text\" id=\"sender_name\" name=\"invoice_sender_name\" class=\"input sender_name\" value=\""
     .$senders[0]->Description."\" />";
     echo "</td>
   </tr>
@@ -408,7 +510,8 @@ function formblock_sender($name, $shipping_settings, $phone,$descriptionarea  ){
       <label for=\"sender_phone\">Телефон</label>
     </th>
     <td>
-      <input type=\"text\" id=\"sender_phone\" name=\"invoice_sender_phone\" class=\"input sender_phone\" value=".$senders[0]->Phones." />
+      <input type=\"text\" id=\"sender_phone\" name=\"invoice_sender_phone\" class=\"input sender_phone\" value=".$senders[0]->Phones." required />
+      <p>Вводьте телефон у такому форматі 380901234567</p>
     </td>
   </tr>
   <tr>
@@ -417,12 +520,18 @@ function formblock_sender($name, $shipping_settings, $phone,$descriptionarea  ){
     </th>
     <td class=\"pb7\">
 
-      <textarea  type=\"text\" id=\"invoice_description\" name=\"invoice_description\" class=\"input\" minlength=\"1\" required>". $descriptionarea."</textarea>
+      <textarea  type=\"text\" id=\"invoice_description\" name=\"invoice_description\" class=\"input\" minlength=\"1\" required />". $descriptionarea."</textarea>
       <p id=\"error_dec\"></p>
     </td>
   </tr>";
+  // echo '<tr><td><pre>';
+  // print_r(getsendersaddr());
+  // echo '</pre></td></td>';
 }
 function formblock_recipient($shipping_first_name,$shipping_last_name,$city, $shipping_state, $warehouse, $shipping_phone){
+  $warehouse = intval($warehouse)>0 ? intval($warehouse) : '';
+  $shipping_phone = intval($shipping_phone)>0 ? $shipping_phone  : '';
+
   echo "<tr>
      <th scope=\"row\">
        <label for=\"recipient_name\">Одержувач (П.І.Б)</label>
@@ -433,10 +542,10 @@ function formblock_recipient($shipping_first_name,$shipping_last_name,$city, $sh
    </tr>
    <tr>
       <th scope=\"row\">
-        <label for=\"recipient_city\">Місто</label>
+        <label for=\"invoice_no_order_np_shipping_method_city_all_name\">Місто</label>
       </th>
       <td>
-       <input type=\"text\" name=\"invoice_recipient_city\" id=\"recipient_city\" class=\"recipient_city\" value=\"".$city."\"  />
+       <input type=\"text\" name=\"invoice_recipient_city\" id=\"invoice_no_order_np_shipping_method_city_all_name\" class=\"input-text regular-input  ui-autocomplete-input\" autocomplete=\"nope\" value=\"".$city."\"  />
     </tr>
     <!--tr>
        <th scope=\"row\">
@@ -448,34 +557,46 @@ function formblock_recipient($shipping_first_name,$shipping_last_name,$city, $sh
 
      <tr>
         <th scope=\"row\">
-          <label for=\"warenumber\">Номер відділення</label>
+          <label for=\"invoice_no_order_np_shipping_method_warehouse_name\">Відділення / Поштомат</label>
         </th>
         <td>
-         <input id=\"warenumber\" type=\"text\" name=\"invoice_recipient_warehouse\" class=\"input recipient_region\" value=".$warehouse." />
+         <input id=\"invoice_no_order_np_shipping_method_warehouse_name\" type=\"text\" name=\"invoice_recipient_warehouse\" class=\"input recipient_region regular-input  ui-autocomplete-input\"  autocomplete=\"nope\" value=\"".$warehouse ."\" />
+         <input class=\"input-text regular-input jjs-hide-nova-poshta-option\" type=\"hidden\" name=\"invoice_no_order_np_shipping_method_warehouse\" id=\"invoice_no_order_np_shipping_method_warehouse\" style=\"\" value=\"\" placeholder=\"\">
       </tr>
       <tr>
          <th scope=\"row\">
            <label for=\"recipient_phone\">Телефон</label>
          </th>
          <td>
-          <input type=\"text\" name=\"invoice_recipient_phone\" class=\"input recipient_phone\" id=\"recipient_phone\" value=". $shipping_phone." />
+          <input type=\"text\" name=\"invoice_recipient_phone\" class=\"input recipient_phone\" id=\"recipient_phone\" value=\"". $shipping_phone."\" required />
+          <p>Вводьте телефон у такому форматі 380901234567</p>
        </tr>
      </tr>";
 }
 function formblock_address_recipient($shipping_first_name,$shipping_last_name, $city,$order_data_billing ,$order_data_shipping, $shipping_phone){
-  if($_GET['debug']){
+  if(isset($_GET['debug']) ){
     echo '<pre>';
-    print_r($order_data_billing);
-    print_r($order_data_shipping);
+    // print_r($order_data_billing);
+    // print_r($order_data_shipping);
     echo '</pre>';
   }
-
+  //розділяємо адресу пробілами
   $shipping_address_array = explode(" ", $order_data_shipping['address_1']) ;
-  $shipping_build = array_pop( (array_slice($shipping_address_array, -1)));
-  $shipping_address = implode(" ", $shipping_address_array );
+  //отримуємо останній елемент як номер будинку
 
+  $arr = array_slice($shipping_address_array, -1);
+
+  $shipping_build = $arr[0];
+
+  //$shipping_build = array_pop( (array_slice($shipping_address_array, -1)));
+  //формується адреса без номеру будинку
+  $shipping_address = implode(" ", $shipping_address_array );
+  //розділяємо адресу пробілами
   $billing_address_array = explode(" ", $order_data_billing['address_1']) ;
-  $billing_build = array_pop((array_slice($billing_address_array, -1)));
+  //отримуємо останній елемент як номер будинку
+  $arr = (array_slice($billing_address_array, -1));
+  $billing_build = $arr[0];
+  //формується адреса без номеру будинку
   $billing_address = implode(" ", $billing_address_array );
 
   $name = $shipping_first_name.' '.$shipping_last_name;
@@ -483,6 +604,11 @@ function formblock_address_recipient($shipping_first_name,$shipping_last_name, $
   $address = ( isset($order_data_shipping['address_1']) ) ? $shipping_address : $billing_address;
   $building = ( isset($order_data_shipping['address_2']) ) ? $shipping_build : $billing_build;
   $flat = ( isset($order_data_shipping['address_2']) ) ? $order_data_shipping['address_2'] : $order_data_billing['address_2'];
+
+  $addressfull = $order_data_billing['address_1'];
+  if(!empty($order_data_shipping['address_1'])){
+    $addressfull = $order_data_shipping['address_1'];
+  }
 
 
   echo "<tr>
@@ -502,25 +628,12 @@ function formblock_address_recipient($shipping_first_name,$shipping_last_name, $
     </tr>
      <tr>
         <th scope=row>
-          <label for=\"RecipientAddressName\">Адреса: Вулиця</label>
+          <label for=\"RecipientAddressName\">Адреса:</label>
         </th>
         <td>
-         <input id=\"RecipientAddressName\" type=\"text\" name=\"invoice_recipient_warehouse\" class=\"input recipient_region\" value=".$address." />
+        <textarea name=addresstext>".$addressfull."</textarea>
       </tr>
-      <tr>
-         <th scope=\"row\">
-           <label for=\"RecipientAddressName\">Адреса: Будинок</label>
-         </th>
-         <td>
-          <input id=\"RecipientAddressName\" type=\"text\" name=\"invoice_recipient_warehouse\" class=\"input recipient_region\" value=".$building." />
-       </tr>
-       <tr>
-          <th scope=\"row\">
-            <label for=\"RecipientAddressName\">Адреса: Квартира</label>
-          </th>
-          <td>
-           <input id=\"Rformblock_param()ecipientAddressName\" type=\"text\" name=\"invoice_recipient_warehouse\" class=\"input recipient_region\" value=".$flat." />
-        </tr>
+
       <tr>
          <th scope=\"row\">
            <label for=\"recipient_phone\">Телефон</label>
@@ -533,8 +646,20 @@ function formblock_address_recipient($shipping_first_name,$shipping_last_name, $
 
 function formblock_param($value, $invoice_dpay, $invoice_payer, $alternate_weight, $invoice_addweight, $invoice_allvolume,$dimentions,
 $alternate_vol, $volumemessage,  $weighte, $order_data ){
-  $values= array('Cargo','Documents','TiresWheels', 'Pallet', 'Parcel' );
-  $volues= array('Вантаж','Документи','Диски', 'Паллети', 'Посилка' );
+
+  $billing_address = $order_data["billing"]["address_1"] ?? $_POST['invoice_recipient_warehouse'] ?? ''; // З замовлення або з поля 'Відділення/Поштомат'
+  $warehouse_billing = explode(" ", $billing_address);
+  $warehouse_billing = str_replace([":", "№"], "", $warehouse_billing);
+  if ((strpos($warehouse_billing[0], 'Почтомат') !== false) || (strpos($warehouse_billing[0], 'Поштомат') !== false)) {
+    // Поштомати
+    $values= array('Parcel', 'Documents' );
+    $volues= array('Посилка', 'Документи' );
+  } else {
+    // Відділення
+    $values= array( 'Parcel',  'Cargo',  'Documents', 'TiresWheels', 'Pallet' );
+    $volues= array( 'Посилка', 'Вантаж','Документи', 'Шини-диски',  'Палета' );
+  }
+
   $vilues= array();
   for( $i=0; $i<sizeof($values); $i++){
     if( $values[$i] == $value){
@@ -544,7 +669,18 @@ $alternate_vol, $volumemessage,  $weighte, $order_data ){
       $vilues[$i] = ' ';
     }
   }
+
+  if(get_option('invoice_date')){
+  echo '<tr><th scope=row><label>Запланована дата:</label></th>
+  <td><input type="date"  name="invoice_datetime"
+         value="'.date('Y').'-'.date('m').'-'.date('d').'"
+         min="'.date('Y').'-'.date('m').'-'.date('d').'" >
+         </td>
+
+</tr>';
+}
   echo "
+
     <tr>
      <th scope=row>
        <label for=sender_cargo>Тип вантажу</label>
@@ -570,13 +706,23 @@ $alternate_vol, $volumemessage,  $weighte, $order_data ){
     if($invoice_dpay > 0){
       echo "<select id=\"invoice_payer\" name=\"invoice_payer\" >
       <option value=\"Recipient\"";
-      if (($order_data['total'] < $invoice_dpay)  ){
+      if (  ($order_data['total'] < $invoice_dpay) && (!get_option('morkvanp_checkout_auto') )  ){
         echo ' selected';
+      }
+      if (  ($order_data['total'] < $invoice_dpay) && (get_option('morkvanp_checkout_auto') )  ){
+        if(get_option('morkvanp_checkout_auto') == $order_data['payment_method']){
+          echo ' selected';
+        }
       }
       echo ">Отримувач</option>
       <option value=\"Sender\" ";
-      if   (($order_data['total'] > $invoice_dpay)  ){
+      if   (($order_data['total'] > $invoice_dpay) && (!get_option('morkvanp_checkout_auto')) ){
         echo ' selected';
+      }
+      if(get_option('morkvanp_checkout_auto')){
+        if(get_option('morkvanp_checkout_auto') != $order_data['payment_method']){
+          echo ' selected';
+        }
       }
       echo ">Відправник</option>
       </select>";
@@ -593,8 +739,18 @@ $alternate_vol, $volumemessage,  $weighte, $order_data ){
         }
         echo ">Відправник</option></select>";
       }
-      echo "</td></tr>";
-
+      if ( get_option( 'np_packing_number' ) ) {
+        echo "
+         <tr>
+            <th scope=row>
+              <label for=invoice_placesi>Номер паковання</label>
+            </th>
+            <td>";
+            $npPackingNumber = isset( $_POST['np_packing_number'] ) ? esc_attr( $_POST['np_packing_number'] ) : '';
+            echo '<input type="text" id="np_packing_number" name="np_packing_number" value="' . $npPackingNumber . '" />';
+        echo "</td>
+          </tr>";
+      }
       if( functions_exists() ){
         echo "<tr><th scope=\"row\"><label class=\"light\" for=\"invoice_cargo_mass\">Вага, кг</label></th><td>";
 
@@ -688,14 +844,18 @@ $alternate_vol, $volumemessage,  $weighte, $order_data ){
       }
 echo "</tr>";
    }
-   echo "
+echo "
  <tr>
     <th scope=row>
       <label for=invoice_placesi>Кількість місць</label>
     </th>
-    <td>
-      <input type=text id=invoice_placesi name=invoice_places value=1 />
-    </td>
+    <td>";
+if ((strpos($warehouse_billing[0], 'Почтомат') !== false) || (strpos($warehouse_billing[0], 'Поштомат') !== false)) {
+    echo "<input type=text id=invoice_placesi name=invoice_places value=1 readonly />";
+} else {
+    echo "<input type=text id=invoice_placesi name=invoice_places value=1 />";
+}
+echo "</td>
   </tr>";
 
   if(functions_exists()){
@@ -706,7 +866,7 @@ echo "</tr>";
         <label for=invoice_priceid>Оголошена вартість</label>
       </th>
       <td>
-        <input id=invoice_priceid type=text name=invoice_price value=".$order_data['total']." />
+        <input id=invoice_priceid type=text name=invoice_price required value=\"".$order_data['total']."\" />
       </td>
     </tr>
       <tr>

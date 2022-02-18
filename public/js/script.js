@@ -1,37 +1,32 @@
 
     jQuery(function(){
-      var selectorseting = document.getElementById("selectorseting");
 
-    if (selectorseting){
-      selectorseting.addEventListener('change', function(){
-        console.log(selectorseting.value);
-
-        allback = document.getElementsByClassName( 'allsettings' );
-
-        for(var i = 0; i < allback.length; i++){
-          allback.item(i).classList.remove('show');
-        }
-
-        classback = document.getElementsByClassName( selectorseting.value );
-        for(var i = 0; i < classback.length; i++){
-          classback.item(i).classList.add('show');
-
-        }
-      });
-    }
       var sp00 = document.getElementsByClassName("checkb");
 
       if(sp00){
         console.log('class are present');
+
+
+        var newarr = [];
+
+        jQuery.each(jQuery(".startcode"), function(){
+          if(jQuery(this).attr('code')=='1'){
+            newarr.push(jQuery(this).attr('ttn'));
+          }
+          });
+
+          jQuery('#bulklistnew').val( newarr.join(",") );
+
+
         jQuery("input.checkb").on( "change", function(){
 
           console.log('ffff');
 
           var favorite = [];
           var favoritedelete = [];
-          $.each($(".checkb:checked"), function(){
-          favorite.push($(this).val());
-          favoritedelete.push($(this).attr('valued'));
+          jQuery.each(jQuery(".checkb:checked"), function(){
+          favorite.push(jQuery(this).val());
+          favoritedelete.push(jQuery(this).attr('valued'));
           });
           tir = favorite.join(",");
           jQuery('#bulklist').val( tir );
@@ -39,14 +34,15 @@
 
 
        });
-       jQuery('#cb-select-all-form').change(function(){
+       // jQuery('#cb-select-all-form').change(function(){
+       jQuery('#cb-select-all-form').on('change', function(){
          setTimeout(function() {
 
            var favorite = [];
            var favoritedelete = [];
-           $.each($(".checkb:checked"), function(){
-           favorite.push($(this).val());
-           favoritedelete.push($(this).attr('valued'));
+           jQuery.each(jQuery(".checkb:checked"), function(){
+           favorite.push(jQuery(this).val());
+           favoritedelete.push(jQuery(this).attr('valued'));
            });
            tir = favorite.join(",");
            jQuery('#bulklist').val( tir );
@@ -66,13 +62,15 @@
         jQuery('#td45').val(textareavalue + ' [' + va + ']')
       });
 
-       jQuery("select#shortselect").change(function(){
+       // jQuery("select#shortselect").change(function(){
+       jQuery("select#shortselect").on('change', function(){
         textareavalue = jQuery('#td45').val();
         va = jQuery(this).val();
         jQuery('#td45').val(textareavalue + ' [' + va + ']')
       });
 
-      jQuery("select#shortselect2").change(function(){
+      // jQuery("select#shortselect2").change(function(){
+      jQuery("select#shortselect2").on('change', function(){
         textareavalue = jQuery('#td45').val();
         va = jQuery(this).val();
         jQuery('#td45').val(textareavalue + ' [' + va + ']')
@@ -84,7 +82,7 @@
 
     jQuery('#standarttext').on('click', function(e){
 
-      textw = "Ваше замовлення #[NOVAPOSHTA_ORDER] вже сформоване і буде відправлено [NOVAPOSHTA_DATE] Новою Поштою. \n\nНомер накладної\: [NOVAPOSHTA_TTN]";
+      textw = "Ваше замовлення #[NOVAPOSHTA_ORDER] вже сформоване і буде відправлено [NOVAPOSHTA_DATE] Новою Поштою. \n\nНомер накладної\: [NOVAPOSHTA_TTN] \n\nПеревірити статус доставки можна за посиланням: [LINK]";
       jQuery("#morkvanp_email_editor_id").val(textw);
 
 
@@ -92,7 +90,8 @@
 
     jQuery('.formsubmit').on('click', function(e){
       alert('Дію виконано');
-      jQuery(this).parent().submit();
+      // jQuery(this).parent().submit();
+      jQuery(this).parent().trigger('submit');
       });
       jQuery('.handlediv').on('click', function(e){//when content of metabox couldnt be open
         //jQuery(this).parent().toggleClass('closed');
@@ -185,27 +184,27 @@
 
 
 
-   var MyDiv1 = document.getElementById("errno");
-    if(MyDiv1){
-        var h = document.getElementById('errno').childNodes[0].clientHeight;
-        h-=20;
-        var MyDiv2 = document.getElementById('messagebox');
-        MyDiv2.innerHTML = MyDiv1.innerHTML;
-        MyDiv2.style.height = h + 'px';
-        MyDiv1.childNodes[0].style.height = 0 + 'px';
-        MyDiv1.childNodes[0].style.padding = 0 ;
-        MyDiv2.classList.add('error');
-    }
+   // var MyDiv1 = document.getElementById("errnonp");
+   //  if(MyDiv1){
+   //      var h = document.getElementById('errnonp').childNodes[0].clientHeight;
+   //      h-=20; console.log(h);
+   //      var MyDiv2 = document.getElementById('messageboxnp');
+   //      MyDiv2.innerHTML = MyDiv1.innerHTML;
+   //      MyDiv2.style.height = h + 'px';
+   //      MyDiv1.childNodes[0].style.height = 0 + 'px';
+   //      MyDiv1.childNodes[0].style.padding = 0 ;
+   //      MyDiv2.classList.add('error');
+   //  }
 
     var MyDiv3 = document.getElementById("nnnid");
     if(MyDiv3){
         MyDiv3 = document.getElementById("nnnid");
         var h = 100 + 'px';
         console.log(h);
-        var MyDiv4 = document.getElementById('messagebox');
+        var MyDiv4 = document.getElementById('messageboxnp');
         MyDiv4.innerHTML = MyDiv3.innerHTML;
         MyDiv4.style.height = h;
-        MyDiv4.style.padding = '8px';
+        MyDiv4.style.paddingLeft = '8px';
         MyDiv4.classList.add('updated');
 
     }

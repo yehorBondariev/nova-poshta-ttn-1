@@ -1,5 +1,25 @@
-.w70 .form-table tr th{
-  min-width: 200px;
+.addressformnpttn{
+  width: 100%
+}
+.addressformnpttn td{
+  padding-right: 0;
+}
+.form-table td p.afterradio{
+  width: calc(100% - 30px);
+    display: block;
+    float: right;
+    margin-top: 0;
+}
+.allsettings input[type=text]{
+  width: 100%;
+}
+.allsettings input.uai{
+      width: calc(100% - 30px);
+      float: right;
+    margin-top: -8px;
+  }
+  .w70 .form-table tr th{
+  min-width: 320px;
 }
 .h3as th{
   padding-bottom: 0;
@@ -120,6 +140,22 @@ p.light{
 	clear: both
 }
 
+.np_order_data_h2 {
+	margin-bottom: 0;
+    font-family: HelveticaNeue-Light,"Helvetica Neue Light","Helvetica Neue",sans-serif;
+    font-size: 21px;
+    font-weight: 400;
+    line-height: 1.2;
+    text-shadow: 1px 1px 1px #fff;
+    padding: 0
+}
+
+.ui-autocomplete {
+    max-height: 200px;
+    overflow-y: auto;
+    overflow-x: hidden;
+}
+
 .form-invoice {
 	display: grid;
 	grid-template-columns: 1fr 1fr 1fr;
@@ -128,19 +164,18 @@ p.light{
 }
 
 .form-invoice .updated {
-	width: 100%;
+	width: 99.3% !important;
 }
 
 .form-invoice>.alink {
 	grid-column: 1 / -1;
-	margin-top: 8px;
-	margin-top: -8px;
+	margin-top: -20px;
 }
 .alink a{
 	margin-right: 20px;
 }
 .settingsgrid {
-	display: grid;
+	display: grid !important;
 	grid-template-columns: 2fr 1fr;
 }
 
@@ -218,6 +253,9 @@ table tr td.pb7 {
 	width: 70%;
 	float: left;
 }
+.settingsgrid .w70{
+  width: 94%;
+}
 
 .p0 {
 	padding: 0 !important;
@@ -245,44 +283,57 @@ body>#wpfooter {
 .firstrow {
 	width: 400px;
 }
-.form-invoice>#messagebox {
+form.form-invoice>#messageboxnp {
     grid-column: 1 / -1;
+    margin: 0;
     margin-top: 8px;
-    height: 0px;
+    height: 0;
     transition: all 1s ease;
     overflow: hidden;
     background: #fff;
-    padding: 0px;
-    margin-left: 0;
+    padding: 0;
+    border-left-width: 4px;
 }
-#errno>div{
+form.form-invoice .error {
+	color: #dc3232;
+    height: auto !important;
+    visibility: visible !important;
+}
+.messagebox_show {
+	display: block;
+}
+#errnonp>div{
 	overflow: hidden;
 }
-#errno, #nnnid{
+#errnonp {
+	position: relative;
+}
+#nnnid{
 	opacity: 0;
 	z-index: -10;
     position: relative;
 }
-#messagebox > div{
+#messageboxnp > div{
 	width: 100%;
 	max-width: 100%;
 }
-#messagebox > div.card {
+#messageboxnp div.card {
     width: 100%;
     max-width: 100%;
     border: none;
-    padding: 8px;
+    border-left-width: 4px;
+    padding: 15px;
     margin: 0;
     box-shadow: none;
 }
-#messagebox > div > p{
+#messageboxnp > div > p{
 	width: 50%;
 	float: left;
 	margin: 0;
 padding: 0;
 color: #23282d;
 }
-#messagebox > div > p br{
+#messageboxnp > div > p br{
 	display: block;
 	margin:0 !important;
 }

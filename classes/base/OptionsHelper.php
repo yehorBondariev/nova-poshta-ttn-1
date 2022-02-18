@@ -18,7 +18,7 @@ class OptionsHelper
     {
         $result = array();
         if ($enableEmpty) {
-            $result[''] = __('Choose an option', NOVA_POSHTA_TTN_DOMAIN);
+            $result[''] = __('Choose region', NOVA_POSHTA_TTN_DOMAIN);
         }
         foreach ($locations as $location) {
             $result[$location->ref] = $location->description;
