@@ -231,6 +231,8 @@ if ('checkout' == window.location.pathname.replace(/\\|\//g, '')) { console.log(
       //console.log('region found doing select2');
       jQuery("#billing_nova_poshta_city").select2();
 
+      // Add functionality select2 ti checkout field "billing_nova_poshta_region"
+      jQuery("#billing_nova_poshta_region").select2();
 
       jQuery("#shipping_nova_poshta_city").select2();
 

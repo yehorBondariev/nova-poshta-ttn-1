@@ -68,7 +68,7 @@
          $region = esc_attr(get_option('region'));
 
          $shipping_settings = get_option('woocommerce_nova_poshta_shipping_method_settings'); //1.6.x support
-         $region = ( null !== $shipping_settings["area_name"] ) ? $shipping_settings["area_name"] : ''; //1.6.x support
+         $region = $shipping_settings["area_name"] ?? ''; //1.6.x support
 
         if (get_option('woocommerce_nova_poshta_shipping_method_area_name')) {
             $region = get_option('woocommerce_nova_poshta_shipping_method_area_name');
@@ -93,7 +93,7 @@
           * Getting settings of WooShipping plugin
           */
          $shipping_settings = get_option('woocommerce_nova_poshta_shipping_method_settings');
-         $value1 = ( null !== $shipping_settings["city_name"] ) ? $shipping_settings["city_name"] : '';
+         $value1 =  $shipping_settings["city_name"] ?? '';
 
 
 
@@ -160,7 +160,7 @@
          // $warehouse = esc_attr( get_option( 'warehouse' ) );
          $shipping_settings = get_option('woocommerce_nova_poshta_shipping_method_settings');
          // $shipping_settings["warehouse_name"];
-         $warehouse = ( null !== $shipping_settings["warehouse_name"] ) ? $shipping_settings["warehouse_name"] : '';
+         $warehouse = $shipping_settings["warehouse_name"] ?? '';
 
 
          if (get_option('woocommerce_nova_poshta_shipping_method_warehouse_name')) {

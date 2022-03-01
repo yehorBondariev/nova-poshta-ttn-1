@@ -122,7 +122,12 @@ class Options extends Base
      */
     protected function getSenderCity()
     {
-        return $this->shippingMethodSettings[self::CITY];
+        $obj = self::$_instance;
+        $arr = $this->shippingMethodSettings;
+        if (! is_array($arr)) {
+            return;
+        }
+        return $arr[self::CITY];
     }
 
     /**

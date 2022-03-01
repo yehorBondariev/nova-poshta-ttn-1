@@ -302,10 +302,16 @@ function pnp_adjust_shipping_rate($rates)
         }
     }
     $all_shipping_methods[$method_index]; // Метод доставки Новою Поштою
-    $modal_settings = get_option( 'woocommerce_nova_poshta_shipping_method_' . $method_index . '_settings' );
-    $plugin_settings = get_option( 'woocommerce_nova_poshta_shipping_method_settings' );
+    $modal_settings = get_option( 'woocommerce_nova_poshta_shipping_method_' . $method_index . '_settings', [] );
+    $plugin_settings =  get_option( 'woocommerce_nova_poshta_shipping_method_settings', [] ) ;
+    if (is_string( $plugin_settings )) {
+        $plugin_settings = unserialize($plugin_settings);
+    }
+    if (! is_array( $plugin_settings ) ) {
+        $plugin_settings = [];
+    }
     $fin_plugin_settings = array_merge( $plugin_settings, $modal_settings );
-    update_option( 'woocommerce_nova_poshta_shipping_method_settings', $fin_plugin_settings );
+    update_option( 'woocommerce_nova_poshta_shipping_method_settings', serialize( $fin_plugin_settings  ));
 
     $index = 0;
     foreach ($rates as $rate) {
@@ -318,7 +324,7 @@ function pnp_adjust_shipping_rate($rates)
             // $rate->cost = np_get_price_shipping($billing_city);
             $rate->cost = $cost;
         } elseif ( ($rate->get_method_id() == 'nova_poshta_shipping_method') && ! ( get_option( 'plus_calc' ) ) ) {
-        	$rate->cost = 0;
+            $rate->cost = 0;
         }
     }
     return $rates;
